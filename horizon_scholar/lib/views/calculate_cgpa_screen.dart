@@ -923,14 +923,6 @@ class _CalculateCgpaScreenState extends State<CalculateCgpaScreen> {
               ),
               const SizedBox(height: 12),
               ListTile(
-                leading: const Icon(Icons.list_alt_outlined),
-                title: const Text("Choose from subject list"),
-                onTap: () {
-                  Navigator.of(ctx).pop();
-                  _showSubjectPickerBottomSheet(context, semester);
-                },
-              ),
-              ListTile(
                 leading: const Icon(Icons.account_tree_outlined),
                 title: const Text("Choose using department"),
                 subtitle: const Text(
@@ -942,6 +934,16 @@ class _CalculateCgpaScreenState extends State<CalculateCgpaScreen> {
                   _showDeptBasedSubjectPicker(context, semester);
                 },
               ),
+              
+              ListTile(
+                leading: const Icon(Icons.list_alt_outlined),
+                title: const Text("Choose from subject list"),
+                onTap: () {
+                  Navigator.of(ctx).pop();
+                  _showSubjectPickerBottomSheet(context, semester);
+                },
+              ),
+              
               ListTile(
                 leading: const Icon(Icons.add),
                 title: const Text("Add new subject manually"),

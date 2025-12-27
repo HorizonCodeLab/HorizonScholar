@@ -338,4 +338,15 @@ class InternalCalcController extends GetxController {
     }
   }
 
+  Future<void> clearAllInternalData() async {
+    // 1️⃣ Delete all marks
+    await markBox.clear();
+    markList.clear();
+
+    // 2️⃣ Delete all internal GPAs
+    await gpaBox.clear();
+    gpas.clear();
+  }
+
+
 }

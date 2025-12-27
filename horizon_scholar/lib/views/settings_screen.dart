@@ -407,16 +407,24 @@ class SettingsScreen extends StatelessWidget {
                         Row(
                           children: [
                           Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: palette.primary.withAlpha(10),
-                                borderRadius: BorderRadius.circular(16),
+                            padding: const EdgeInsets.all(6), // space between border & image
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: palette.primary.withAlpha(50),
+                                width: 1,
                               ),
-                              child: Icon(
-                                Icons.school_rounded,
-                                color: palette.primary,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8), // inner radius
+                              child: Image.asset(
+                                'assets/logo.png',
+                                width: 48,
+                                height: 48,
+                                fit: BoxFit.contain,
                               ),
                             ),
+                          ),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Column(
@@ -510,12 +518,18 @@ class SettingsScreen extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
-            title: Text(
-              title,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
+            title: Row(
+              children: [
+                Icon(Icons.warning_amber_rounded, color: palette.error),
+                const SizedBox(width: 8),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
@@ -539,6 +553,8 @@ class SettingsScreen extends StatelessWidget {
                   decoration: InputDecoration(
                     labelText: 'Type "delete" to confirm',
                     labelStyle: TextStyle(fontSize: 12),
+                    filled: true,
+                    fillColor: palette.black.withAlpha(20),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -552,7 +568,7 @@ class SettingsScreen extends StatelessWidget {
                 onPressed: () => Get.back(),
                 child: Text(
                   "Cancel",
-                  style: TextStyle(fontSize: 12),
+                  style: TextStyle(fontSize: 12, color: palette.black.withAlpha(200)),
                 ),
               ),
               ElevatedButton(

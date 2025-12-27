@@ -274,7 +274,7 @@ class VaultScreen extends StatelessWidget {
                         labelText: "Document Title",
                         floatingLabelBehavior: FloatingLabelBehavior.never,
                         filled: true,
-                        fillColor: palette.accent,
+                        fillColor: palette.black.withAlpha(10),
                         prefixIcon: const Icon(Icons.title),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -306,7 +306,16 @@ class VaultScreen extends StatelessWidget {
                             (c) => ChoiceChip(
                               backgroundColor: palette.black.withAlpha(20),
                               selectedColor: palette.primary,
-                              label: Text(c),
+                              label: Text(
+                                c,
+                                style: TextStyle(
+                                  color: selectedCategories.contains(c)
+                                      ? palette.accent   // when selected
+                                      : palette.black,   // when not selected
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              showCheckmark: false,
                               selected: selectedCategories.contains(c),
                               onSelected: (val) {
                                 if (val) {
@@ -316,6 +325,7 @@ class VaultScreen extends StatelessWidget {
                                 }
                               },
                             ),
+
                           )
                           .toList(),
                     ),
@@ -336,19 +346,19 @@ class VaultScreen extends StatelessWidget {
                     const SizedBox(height: 12),
 
                     // ---------- FAV SWITCH ----------
-                    SwitchListTile(
-                      contentPadding: EdgeInsets.zero,
-                      value: isFav.value,
-                      activeTrackColor: palette.primary,
-                      activeColor: palette.accent,
-                      title: Text(
-                        "Mark as favourite",
-                        style: TextStyle(fontSize: 14),
-                      ),
-                      onChanged: (v) => isFav.value = v,
-                    ),
+                    // SwitchListTile(
+                    //   contentPadding: EdgeInsets.zero,
+                    //   value: isFav.value,
+                    //   activeTrackColor: palette.primary,
+                    //   activeColor: palette.accent,
+                    //   title: Text(
+                    //     "Mark as favourite",
+                    //     style: TextStyle(fontSize: 14),
+                    //   ),
+                    //   onChanged: (v) => isFav.value = v,
+                    // ),
 
-                    const SizedBox(height: 14),
+                    // const SizedBox(height: 14),
 
                     // ---------- BUTTONS ----------
                     Row(
@@ -432,16 +442,15 @@ class VaultScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          "Confirm Delete",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: () => Navigator.of(ctx).pop(false),
+                        Row(
+                          children: [
+                            Icon(Icons.warning_amber_rounded, color: palette.error),
+                            const SizedBox(width: 8),
+                            const Text(
+                              "Delete Subject?",
+                              style: TextStyle(fontWeight: FontWeight.w700),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -449,9 +458,9 @@ class VaultScreen extends StatelessWidget {
                     const SizedBox(height: 10),
 
                     // ------------ MESSAGE ------------
-                    const Text(
+                    Text(
                       "Are you sure you want to delete this document?",
-                      style: TextStyle(fontSize: 14),
+                      style: TextStyle(fontSize: 13, color: palette.black),
                     ),
 
                     const SizedBox(height: 18),
@@ -465,7 +474,7 @@ class VaultScreen extends StatelessWidget {
                           child: Text(
                             "Cancel",
                             style: TextStyle(
-                              color: palette.primary,
+                              color: palette.black,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -558,7 +567,7 @@ class VaultScreen extends StatelessWidget {
                         labelText: "Document title",
                         floatingLabelBehavior: FloatingLabelBehavior.never,
                         filled: true,
-                        fillColor: palette.accent,
+                        fillColor: palette.black.withAlpha(10),
                         prefixIcon: const Icon(Icons.title),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -592,7 +601,16 @@ class VaultScreen extends StatelessWidget {
                             (c) => ChoiceChip(
                               backgroundColor: palette.black.withAlpha(20),
                               selectedColor: palette.primary,
-                              label: Text(c),
+                              label: Text(
+                                c,
+                                style: TextStyle(
+                                  color: selectedCategories.contains(c)
+                                      ? palette.accent   // selected
+                                      : palette.black,   // not selected
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              showCheckmark: false,
                               selected: selectedCategories.contains(c),
                               onSelected: (val) {
                                 if (val) {
@@ -647,32 +665,31 @@ class VaultScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         // DELETE button (left)
-                        OutlinedButton.icon(
+                        FilledButton(
                           onPressed: isCourseDoc
-                            ? null
-                            : () async {
-                                final confirmed = await _confirmDeleteDialog(context);
-                                if (confirmed == true) {
-                                  await controller.deleteDocument(doc);
-                                  Navigator.of(context).pop(); // close edit dialog too
-                                }
-                              },
-
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide(
-                              color: isCourseDoc
-                                  ? palette.black.withAlpha(150)
-                                  : palette.error,
-                            ),
-                            foregroundColor:
-                                isCourseDoc ? palette.black.withAlpha(150) : palette.error,
+                              ? null
+                              : () async {
+                                  final confirmed = await _confirmDeleteDialog(context);
+                                  if (confirmed == true) {
+                                    await controller.deleteDocument(doc);
+                                    if (context.mounted) Navigator.of(context).pop();
+                                  }
+                                },
+                          style: FilledButton.styleFrom(
+                            backgroundColor: palette.error,
+                            foregroundColor: Colors.white,
+                            // Styling for the disabled state
+                            disabledBackgroundColor: palette.black.withAlpha(40),
+                            disabledForegroundColor: palette.black.withAlpha(150),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
+                            // Standard button height/padding
+                            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
                           ),
-                          icon: const Icon(Icons.delete_outline, size: 18),
-                          label: const Text("Delete"),
+                          child: const Text("Delete"),
                         ),
+
 
                         // Cancel + Save (right)
                         Row(
@@ -777,7 +794,7 @@ class VaultScreen extends StatelessWidget {
                     labelText: "Category name",
                     floatingLabelBehavior: FloatingLabelBehavior.never,
                     filled: true,
-                    fillColor: palette.accent,
+                    fillColor: palette.black.withAlpha(10),
                     prefixIcon: const Icon(Icons.label_outline),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -794,7 +811,7 @@ class VaultScreen extends StatelessWidget {
                       onPressed: () => Navigator.of(ctx).pop(),
                       child: Text(
                         "Cancel",
-                        style: TextStyle(color: palette.primary),
+                        style: TextStyle(color: palette.black),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -1069,14 +1086,14 @@ class _DocumentCard extends StatelessWidget {
     else if (_isPdf) {
       return Container(
         decoration: BoxDecoration(
-          color: palette.accent,
+          color: const Color.fromARGB(255, 233, 233, 233),
           borderRadius: BorderRadius.circular(16),
         ),
-        child: Center(
+        child: const Center(
           child: Icon(
             Icons.picture_as_pdf,
             size: 50,
-            color: palette.primary,
+            color: Color.fromARGB(255, 226, 24, 9), // Standard Red
           ),
         ),
       );

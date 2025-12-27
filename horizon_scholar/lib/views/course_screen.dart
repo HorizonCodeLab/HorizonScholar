@@ -494,12 +494,16 @@ class CourseScreen extends StatelessWidget {
                   // Course name
                   TextField(
                     controller: nameController,
+                    style: const TextStyle(fontSize: 14),
                     decoration: InputDecoration(
                       labelText: "Course name",
+                      labelStyle: TextStyle(
+                        fontSize: 14,
+                      ),
                       floatingLabelBehavior: FloatingLabelBehavior.never,
-                      prefixIcon: const Icon(Icons.menu_book_outlined),
+                      prefixIcon: const Icon(Icons.menu_book_outlined, size: 22,),
                       filled: true,
-                      fillColor: palette.accent,
+                      fillColor: palette.black.withAlpha(10),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide.none,
@@ -509,21 +513,44 @@ class CourseScreen extends StatelessWidget {
                   const SizedBox(height: 10),
 
                   // Description
-                  TextField(
-                    controller: descController,
-                    decoration: InputDecoration(
-                      labelText: "Course description",
-                      floatingLabelBehavior: FloatingLabelBehavior.never,
-                      prefixIcon: const Icon(Icons.description_outlined),
-                      filled: true,
-                      fillColor: palette.accent,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: palette.black.withAlpha(10),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    maxLines: 3,
+                    padding: const EdgeInsets.fromLTRB(12, 14, 12, 14),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Icon aligned with first text line (NOT label)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2),
+                          child: Icon(
+                            Icons.description_outlined,
+                            size: 22,
+                            color: palette.black.withAlpha(160),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+
+                        Expanded(
+                          child: TextField(
+                            controller: descController,
+                            maxLines: 3,
+                            textAlignVertical: TextAlignVertical.top,
+                            style: const TextStyle(fontSize: 14),
+                            decoration: const InputDecoration(
+                              hintText: "Course description",
+                              border: InputBorder.none,
+                              isDense: true,
+                              contentPadding: EdgeInsets.zero,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+                  
                   const SizedBox(height: 10),
 
                   // Upload certificate
@@ -858,12 +885,16 @@ class CourseScreen extends StatelessWidget {
                   // Course name
                   TextField(
                     controller: nameController,
+                    style: const TextStyle(fontSize: 14),
                     decoration: InputDecoration(
                       labelText: "Course name",
+                      labelStyle: TextStyle(
+                        fontSize: 14,
+                      ),
                       floatingLabelBehavior: FloatingLabelBehavior.never,
-                      prefixIcon: const Icon(Icons.menu_book_outlined),
+                      prefixIcon: const Icon(Icons.menu_book_outlined, size: 22,),
                       filled: true,
-                      fillColor: palette.accent,
+                      fillColor: palette.black.withAlpha(10),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide.none,
@@ -873,21 +904,44 @@ class CourseScreen extends StatelessWidget {
                   const SizedBox(height: 10),
 
                   // Description
-                  TextField(
-                    controller: descController,
-                    decoration: InputDecoration(
-                      labelText: "Course description",
-                      floatingLabelBehavior: FloatingLabelBehavior.never,
-                      prefixIcon: const Icon(Icons.description_outlined),
-                      filled: true,
-                      fillColor: palette.accent,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: palette.black.withAlpha(10),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    maxLines: 3,
+                    padding: const EdgeInsets.fromLTRB(12, 14, 12, 14),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Icon aligned with first text line (NOT label)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2),
+                          child: Icon(
+                            Icons.description_outlined,
+                            size: 22,
+                            color: palette.black.withAlpha(160),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+
+                        Expanded(
+                          child: TextField(
+                            controller: descController,
+                            maxLines: 3,
+                            textAlignVertical: TextAlignVertical.top,
+                            style: const TextStyle(fontSize: 14),
+                            decoration: const InputDecoration(
+                              hintText: "Course description",
+                              border: InputBorder.none,
+                              isDense: true,
+                              contentPadding: EdgeInsets.zero,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+
                   const SizedBox(height: 10),
 
                   // Upload certificate
@@ -1051,12 +1105,15 @@ class CourseScreen extends StatelessWidget {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(
-                                          "Delete course",
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                          ),
+                                        Row(
+                                          children: [
+                                            Icon(Icons.warning_amber_rounded, color: palette.error),
+                                            const SizedBox(width: 8),
+                                            const Text(
+                                              "Delete Course?",
+                                              style: TextStyle(fontWeight: FontWeight.w700),
+                                            ),
+                                          ],
                                         ),
                                         IconButton(
                                           icon: const Icon(Icons.close),
@@ -1067,8 +1124,8 @@ class CourseScreen extends StatelessWidget {
                                     ),
                                     const SizedBox(height: 8),
                                     Text(
-                                      "Are you sure you want to delete this course?",
-                                      style: TextStyle(fontSize: 13),
+                                      "Are you sure you want to delete this course? This action cannot be undone.",
+                                      style: TextStyle(fontSize: 13, color: palette.black),
                                     ),
                                     const SizedBox(height: 16),
                                     Row(
@@ -1219,7 +1276,7 @@ class CourseScreen extends StatelessWidget {
                   decoration: InputDecoration(
                     labelText: "Category name",
                     filled: true,
-                    fillColor: palette.accent,
+                    fillColor: palette.black.withAlpha(10),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
