@@ -23,13 +23,14 @@ class SubjectModelAdapter extends TypeAdapter<SubjectModel> {
       grade: fields[3] as String,
       code: fields[4] == null ? 'None' : fields[4] as String,
       metaMapping: fields[5] == null ? '' : fields[5] as String,
+      category: fields[6] == null ? 'core' : fields[6] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, SubjectModel obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.semester)
       ..writeByte(1)
@@ -41,7 +42,9 @@ class SubjectModelAdapter extends TypeAdapter<SubjectModel> {
       ..writeByte(4)
       ..write(obj.code)
       ..writeByte(5)
-      ..write(obj.metaMapping);
+      ..write(obj.metaMapping)
+      ..writeByte(6)
+      ..write(obj.category);
   }
 
   @override

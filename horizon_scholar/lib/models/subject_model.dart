@@ -24,6 +24,10 @@ class SubjectModel extends HiveObject {
   @HiveField(5, defaultValue: '')
   String metaMapping;
 
+  @HiveField(6, defaultValue: 'core')
+  String category; 
+  // "core" | "pe" | "oe"
+
   SubjectModel({
     required this.semester,
     required this.name,
@@ -31,5 +35,6 @@ class SubjectModel extends HiveObject {
     this.grade = '',
     required this.code,
     required this.metaMapping,
+    this.category='core'
   });
 }

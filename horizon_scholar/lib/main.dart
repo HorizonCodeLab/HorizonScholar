@@ -5,7 +5,7 @@ import 'package:horizon_scholar/controllers/internal_calc_controller.dart';
 import 'package:horizon_scholar/models/internal_gpa_model.dart';
 import 'package:horizon_scholar/models/internal_mark_model.dart';
 import 'package:horizon_scholar/models/internal_model.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+//import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 // MODELS
 
@@ -17,7 +17,7 @@ import 'models/gpa_model.dart';
 
 import 'controllers/cgpa_calc_controller.dart';
 import 'controllers/theme_controller.dart';
-import 'controllers/ad_controller.dart';
+//import 'controllers/ad_controller.dart';
 
 // =====
 
@@ -28,7 +28,7 @@ import 'routes/app_routes.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-  await MobileAds.instance.initialize();
+  //await MobileAds.instance.initialize();
   Hive.registerAdapter(CgpaModelAdapter());
   Hive.registerAdapter(DocumentModelAdapter());
   Hive.registerAdapter(CourseModelAdapter());
@@ -50,7 +50,7 @@ void main() async {
 
   final settingsBox = await Hive.openBox('settingsBox');
   
-  Get.put(AdController(), permanent: true);
+  //Get.put(AdController(), permanent: true);
   Get.put(CgpaCalcController(), permanent: true);
   Get.put(InternalCalcController(), permanent: true);
   Get.put(ThemeController(settingsBox), permanent: true);

@@ -50,70 +50,57 @@ class CgpaCalcController extends GetxController {
   // CSV seeding (templates)
   // ----------------------------------------------------------------------------
 
+  Future<void> _loadCsv({
+    required String path,
+    required String category,
+  }) async {
+    try {
+      final csvString = await rootBundle.loadString(path);
+      final lines = const LineSplitter().convert(csvString);
+
+      for (int i = 1; i < lines.length; i++) {
+        final parts = lines[i].split(',');
+        if (parts.length < 4) continue;
+
+        final subject = SubjectModel(
+          semester: 0,
+          code: parts[0].trim(),
+          name: parts[1].trim(),
+          credits: double.tryParse(parts[2]) ?? 0,
+          metaMapping: parts[3].trim(),
+          grade: '',
+          category: category,
+        );
+
+        await subjectBox.add(subject);
+        subjects.add(subject);
+      }
+    } catch (e) {
+      print("CSV load error ($path): $e");
+    }
+  }
+
+
   Future<void> _seedTemplatesFromCsvIfEmpty() async {
-    // If there are already templates (semester == 0), do nothing
     final hasTemplates = subjects.any((s) => s.semester == 0);
     if (hasTemplates) return;
 
-    try {
-      // 1. Load CSV string from assets
-      final csvString = await rootBundle.loadString('assets/subjects.csv');
+    await _loadCsv(
+      path: 'assets/subjects.csv',
+      category: 'core',
+    );
 
-      // 2. Split into lines
-      final lines = const LineSplitter().convert(csvString);
-      if (lines.isEmpty) return;
+    await _loadCsv(
+      path: 'assets/professional_electives.csv',
+      category: 'pe',
+    );
 
-      // 3. Assume first line is header: code,name,credits,metaMapping
-      //    Start from index 1
-      final List<SubjectModel> templateList = [];
-
-      for (int i = 1; i < lines.length; i++) {
-        final line = lines[i].trim();
-        if (line.isEmpty) continue;
-
-        // Simple split by comma; if your names contain commas, you might need a proper CSV parser
-        final parts = line.split(',');
-
-        if (parts.length < 3) {
-          // Not enough columns → skip
-          continue;
-        }
-
-        final code = parts[0].trim();
-        final name = parts[1].trim();
-        final creditsStr = parts[2].trim();
-        final meta = parts.length >= 4 ? parts[3].trim() : '';
-
-        final credits = double.tryParse(creditsStr) ?? 0.0;
-
-        if (code.isEmpty || name.isEmpty || credits <= 0) {
-          // Invalid row → skip
-          continue;
-        }
-
-        final subject = SubjectModel(
-          semester: 0,     // template
-          name: name,
-          credits: credits,
-          grade: '',       // template has no grade
-          code: code,
-          metaMapping: meta, // e.g. "21^25$CB^CS^AD$3^4^5"
-        );
-
-        templateList.add(subject);
-      }
-
-      // 4. Save them in Hive and in observable list
-      for (final s in templateList) {
-        await subjectBox.add(s);
-      }
-
-      subjects.addAll(templateList);
-    } catch (e) {
-      // Optional: log or show debug message
-      print('Error seeding templates from CSV: $e');
-    }
+    await _loadCsv(
+      path: 'assets/open_electives.csv',
+      category: 'oe',
+    );
   }
+
 
   // ----------------------------------------------------------------------------
 
@@ -415,5 +402,16 @@ class CgpaCalcController extends GetxController {
     // 4️⃣ Recalculate CGPA
     await recalculateAll();
   }
+
+  Map<String, List<SubjectModel>> groupByCategory(
+    List<SubjectModel> list,
+  ) {
+    return {
+      'core': list.where((s) => s.category == 'core').toList(),
+      'pe': list.where((s) => s.category == 'pe').toList(),
+      'oe': list.where((s) => s.category == 'oe').toList(),
+    };
+  }
+
 
 }

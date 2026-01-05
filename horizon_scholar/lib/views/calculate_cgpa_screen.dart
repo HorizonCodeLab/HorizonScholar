@@ -599,48 +599,119 @@ class _CalculateCgpaScreenState extends State<CalculateCgpaScreen> {
   // ------------------- DEPT-BASED SUBJECT PICKER (OPTIMIZED) -------------------
 
   void _showDeptBasedSubjectPicker(BuildContext context, int semester) {
-    // UI values for regulations & departments
+    final palette = themeController.palette;
+
+    // UI values
     final regs = ['2021', '2025'];
     final depts = [
       {'code': 'CB', 'label': 'CSBS'},
       {'code': 'CS', 'label': 'CSE'},
+      {'code': 'AM', 'label': 'CSE (AIML)'},
+      {'code': 'IT', 'label': 'IT'},
       {'code': 'AD', 'label': 'AIDS'},
+      {'code': 'CE', 'label': 'Civil'},
+      {'code': 'ME', 'label': 'Mech'},
+      {'code': 'EC', 'label': 'ECE'},
+      {'code': 'EE', 'label': 'EEE'},
     ];
 
     final selectedReg = RxnString();
-    final selectedDeptCode = RxnString();
-    
-    // Using a Set for faster lookups (O(1)) instead of List (O(N))
-    final selectedCodes = <String>{}.obs; 
-    
-    // Separate List for the filtered subjects to avoid re-filtering on selection
+    final selectedDept = RxnString();
+
+    // Selected subject codes
+    final selectedCodes = <String>{}.obs;
+
+    // Filtered templates
     final filteredSubjects = <SubjectModel>[].obs;
 
-    final palette = themeController.palette;
-
-
-    // Helper to run the heavy filter logic
-    void updateFilteredList() {
+    /// 🔹 Heavy filter logic (runs ONLY on dropdown change)
+    void updateFiltered() {
       final reg = selectedReg.value;
-      final deptCode = selectedDeptCode.value;
+      final dept = selectedDept.value;
 
-      if (reg == null || deptCode == null) {
+      if (reg == null || dept == null) {
         filteredSubjects.clear();
         return;
       }
 
-      final templates = calcController.templates;
-      final filtered = templates.where((s) {
+      final result = calcController.templates.where((s) {
         return calcController.subjectMatchesMeta(
           s,
           regulation: reg,
-          department: deptCode,
+          department: dept,
           semester: semester,
         );
       }).toList()
         ..sort((a, b) => a.code.compareTo(b.code));
-      
-      filteredSubjects.assignAll(filtered);
+
+      filteredSubjects.assignAll(result);
+    }
+
+    /// 🔹 Section builder
+    Widget section(
+      String title,
+      List<SubjectModel> list,
+    ) {
+      if (list.isEmpty) return const SizedBox();
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(6, 12, 6, 6),
+            child: Text(
+              title,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: palette.primary,
+              ),
+            ),
+          ),
+          ...list.map((s) {
+            final alreadyAdded = calcController.subjectExists(
+              code: s.code,
+              semester: semester,
+            );
+
+            return Card(
+              color: palette.accent,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Obx(() {
+                return CheckboxListTile(
+                  value: selectedCodes.contains(s.code),
+                  onChanged: alreadyAdded
+                      ? null
+                      : (val) {
+                          if (val == true) {
+                            selectedCodes.add(s.code);
+                          } else {
+                            selectedCodes.remove(s.code);
+                          }
+                        },
+                  title: Text(
+                    "${s.code} - ${s.name}",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: alreadyAdded
+                          ? palette.black.withAlpha(120)
+                          : palette.black,
+                    ),
+                  ),
+                  subtitle: Text(
+                    alreadyAdded
+                        ? "Already added"
+                        : "${s.credits.toStringAsFixed(1)} credits",
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                );
+              }),
+            );
+          }),
+        ],
+      );
     }
 
     showModalBottomSheet(
@@ -653,7 +724,7 @@ class _CalculateCgpaScreenState extends State<CalculateCgpaScreen> {
       builder: (ctx) {
         return DraggableScrollableSheet(
           expand: false,
-          initialChildSize: 0.85,
+          initialChildSize: 0.9,
           minChildSize: 0.6,
           maxChildSize: 0.95,
           builder: (_, scrollController) {
@@ -662,7 +733,7 @@ class _CalculateCgpaScreenState extends State<CalculateCgpaScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header
+                  // HEADER
                   Row(
                     children: [
                       const Text(
@@ -681,77 +752,75 @@ class _CalculateCgpaScreenState extends State<CalculateCgpaScreen> {
                   ),
                   const SizedBox(height: 12),
 
-                  // Regulation dropdown
+                  // REGULATION
                   Obx(() {
                     return DropdownButtonFormField<String>(
                       value: selectedReg.value,
                       decoration: InputDecoration(
                         labelText: "Regulation",
-                        labelStyle: TextStyle(fontSize: 13),
                         filled: true,
                         fillColor: palette.accent,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 10,
-                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide.none,
                         ),
                       ),
                       items: regs
-                          .map((r) => DropdownMenuItem(value: r, child: Text("Reg $r")))
+                          .map((r) => DropdownMenuItem(
+                                value: r,
+                                child: Text("Reg $r"),
+                              ))
                           .toList(),
                       onChanged: (val) {
                         selectedReg.value = val;
                         selectedCodes.clear();
-                        updateFilteredList(); // Only filter when dropdown changes
+                        updateFiltered();
                       },
                     );
                   }),
                   const SizedBox(height: 10),
 
-                  // Department dropdown
+                  // DEPARTMENT
                   Obx(() {
                     return DropdownButtonFormField<String>(
-                      value: selectedDeptCode.value,
+                      value: selectedDept.value,
                       decoration: InputDecoration(
                         labelText: "Department",
-                        labelStyle: TextStyle(fontSize: 13, color: palette.black),
                         filled: true,
                         fillColor: palette.accent,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 10,
-                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide.none,
                         ),
                       ),
                       items: depts
-                          .map((d) => DropdownMenuItem(value: d['code'], child: Text(d['label']!)))
+                          .map((d) => DropdownMenuItem(
+                                value: d['code'],
+                                child: Text(d['label']!),
+                              ))
                           .toList(),
                       onChanged: (val) {
-                        selectedDeptCode.value = val;
+                        selectedDept.value = val;
                         selectedCodes.clear();
-                        updateFilteredList(); // Only filter when dropdown changes
+                        updateFiltered();
                       },
                     );
                   }),
                   const SizedBox(height: 12),
 
-                  // Subject list
+                  // SUBJECT LIST
                   Expanded(
-                    // This Obx now ONLY listens to filteredSubjects (list changes), 
-                    // NOT selections.
                     child: Obx(() {
-                      if (selectedReg.value == null || selectedDeptCode.value == null) {
-                         return Center(
+                      if (selectedReg.value == null ||
+                          selectedDept.value == null) {
+                        return Center(
                           child: Text(
-                            "Select regulation and department to view subjects\nfor Sem $semester",
+                            "Select regulation and department\nfor Semester $semester",
                             textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 13, color: palette.black),
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: palette.black,
+                            ),
                           ),
                         );
                       }
@@ -760,103 +829,61 @@ class _CalculateCgpaScreenState extends State<CalculateCgpaScreen> {
                         return Center(
                           child: Text(
                             "No subjects mapped for this combination.",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 13, color: palette.black),
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: palette.black,
+                            ),
                           ),
                         );
                       }
 
-                      return ListView.builder(
+                      final grouped =
+                          calcController.groupByCategory(filteredSubjects);
+
+                      return ListView(
                         controller: scrollController,
-                        itemCount: filteredSubjects.length,
-                        itemBuilder: (_, index) {
-                          final subject = filteredSubjects[index];
-                          final code = subject.code;
-                          final alreadyAdded = calcController.subjectExists(
-                            code: subject.code,
-                            semester: semester,
-                          );
-
-
-                          return Card(
-                            color: palette.accent,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            // Optimization: Only this specific tile rebuilds when ticked
-                            child: Obx(() {
-                              //final isSelected = selectedCodes.contains(code);
-                              return CheckboxListTile(
-                                value: selectedCodes.contains(code),
-                                onChanged: alreadyAdded
-                                    ? null
-                                    : (val) {
-                                        if (val == true) {
-                                          selectedCodes.add(code);
-                                        } else {
-                                          selectedCodes.remove(code);
-                                        }
-                                      },
-                                title: Text(
-                                  "${subject.code} - ${subject.name}",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    color: alreadyAdded ? palette.black.withAlpha(120) : palette.black,
-                                  ),
-                                ),
-                                subtitle: Text(
-                                  alreadyAdded
-                                      ? "Already added"
-                                      : "${subject.credits.toStringAsFixed(1)} credits",
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                              );
-                            }),
-                          );
-                        },
+                        children: [
+                          section("Subjects", grouped['core'] ?? []),
+                          section("Professional Electives", grouped['pe'] ?? []),
+                          section("Open Electives", grouped['oe'] ?? []),
+                        ],
                       );
                     }),
                   ),
 
                   const SizedBox(height: 8),
 
-                  // Add selected button
+                  // ADD BUTTON
                   Obx(() {
-                    final hasSelection = selectedCodes.isNotEmpty;
+                    final enabled = selectedCodes.isNotEmpty;
                     return SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              hasSelection ? palette.primary : palette.black.withAlpha(150),
+                          backgroundColor: enabled
+                              ? palette.primary
+                              : palette.black.withAlpha(150),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 14,
-                            horizontal: 10,
-                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
                         ),
-                        onPressed: hasSelection
+                        onPressed: enabled
                             ? () async {
-                                final reg = selectedReg.value;
-                                final deptCode = selectedDeptCode.value;
-                                if (reg == null || deptCode == null) return;
+                                final toAdd = filteredSubjects
+                                    .where((s) =>
+                                        selectedCodes.contains(s.code))
+                                    .toList();
 
-                                // Helper to identify selected objects
-                                final toAdd = filteredSubjects.where((s) {
-                                  return selectedCodes.contains(s.code);
-                                }).toList();
+                                Navigator.of(ctx).pop();
 
-                                Navigator.of(ctx).pop(); // Close UI immediately to feel snappy
-
-                                // Process in background
-                                for (final t in toAdd) {
+                                for (final s in toAdd) {
                                   await calcController.addSubjectFromTemplate(
-                                    t,
+                                    s,
                                     semester,
                                   );
                                 }
+
                                 await calcController.recalculateAll();
 
                                 if (context.mounted) {
@@ -871,7 +898,7 @@ class _CalculateCgpaScreenState extends State<CalculateCgpaScreen> {
                               }
                             : null,
                         child: Text(
-                          hasSelection
+                          enabled
                               ? "Add selected subjects"
                               : "Select subjects to add",
                           style: TextStyle(color: palette.accent),
@@ -887,6 +914,7 @@ class _CalculateCgpaScreenState extends State<CalculateCgpaScreen> {
       },
     );
   }
+
 
   // ------------------- ADD SUBJECT OPTIONS SHEET -------------------
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+//import 'package:horizon_scholar/widgets/banner_ad_widget.dart';
 import '../../models/gpa_model.dart';
 import '../../controllers/theme_controller.dart';
 import 'package:get/get.dart';
@@ -69,7 +70,7 @@ class _PredictCgpaPageState extends State<PredictCgpaPage> {
         title:Text("Predict Next Semester CGPA", style: TextStyle(
           fontSize: 22,
           fontFamily: 'Righteous',
-          color: palette.black,
+          color: palette.accent,
         ),),
         centerTitle: true,
         elevation: 0,
@@ -185,6 +186,8 @@ class _PredictCgpaPageState extends State<PredictCgpaPage> {
                   ),
                 ),
               ),
+              SizedBox(height: 20),
+              //BannerAdWidget(),
             ],
           )
 

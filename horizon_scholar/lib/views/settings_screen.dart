@@ -6,7 +6,7 @@ import '../controllers/cgpa_controller.dart';
 import '../controllers/course_controller.dart';
 import '../controllers/document_controller.dart';
 import '../controllers/theme_controller.dart'; // AppTheme + ThemeController + AppPalette
-import '../widgets/banner_ad_widget.dart'; 
+//import '../widgets/banner_ad_widget.dart'; 
 
 class SettingsScreen extends StatelessWidget {
   SettingsScreen({super.key});
@@ -54,16 +54,16 @@ class SettingsScreen extends StatelessWidget {
 
                 // ======== BANNER AD =========
 
-                Center(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 6),
-                    decoration: BoxDecoration(
-                      color: palette.black.withAlpha(5),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const BannerAdWidget(),
-                  ),
-                ),
+                // Center(
+                //   child: Container(
+                //     padding: const EdgeInsets.symmetric(vertical: 6),
+                //     decoration: BoxDecoration(
+                //       color: palette.black.withAlpha(5),
+                //       borderRadius: BorderRadius.circular(12),
+                //     ),
+                //     child: const BannerAdWidget(),
+                //   ),
+                // ),
 
                 const SizedBox(height: 22),
                 _buildPreferencesSection(palette),

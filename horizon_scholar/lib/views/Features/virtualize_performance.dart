@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+//import 'package:horizon_scholar/widgets/banner_ad_widget.dart';
 import '../../widgets/semester_gpa_bar_chart.dart';
 import '../../widgets/gpa_pie_chart.dart';
 import '../../controllers/cgpa_calc_controller.dart';
@@ -111,7 +112,8 @@ class VisualizePerformanceScreen extends StatelessWidget {
                   ),
               ),
 
-
+              SizedBox(height: 20),
+              //BannerAdWidget(),
               const SizedBox(height: 20),
 
               // ---------------- PIE CHART ----------------

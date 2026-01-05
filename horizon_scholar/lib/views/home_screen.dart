@@ -6,7 +6,7 @@ import '../controllers/home_controller.dart';
 import '../controllers/course_controller.dart';
 import '../controllers/document_controller.dart';
 import '../controllers/theme_controller.dart';
-import '../widgets/banner_ad_widget.dart'; 
+//import '../widgets/banner_ad_widget.dart'; 
 // import '../screens/cgpa_screen.dart';
 // import '../screens/course_screen.dart';
 // import '../screens/vault_screen.dart';
@@ -244,29 +244,29 @@ class HomeScreen extends StatelessWidget {
 
                 // ======== BANNER AD =========
 
-                Obx(() {
-                  if (!homeController.shouldShowBanner) {
-                    return const SizedBox.shrink();
-                  }
+                // Obx(() {
+                //   if (!homeController.shouldShowBanner) {
+                //     return const SizedBox.shrink();
+                //   }
 
-                  return Column(
-                    children: [
-                      Center(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 6),
-                          decoration: BoxDecoration(
-                            color: palette.black.withAlpha(5),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const BannerAdWidget(),
-                        ),
-                      ),
-                    ],
-                  );
-                }),
+                //   return Column(
+                //     children: [
+                //       Center(
+                //         child: Container(
+                //           padding: const EdgeInsets.symmetric(vertical: 6),
+                //           decoration: BoxDecoration(
+                //             color: palette.black.withAlpha(5),
+                //             borderRadius: BorderRadius.circular(12),
+                //           ),
+                //           child: const BannerAdWidget(),
+                //         ),
+                //       ),
+                //     ],
+                //   );
+                // }),
 
 
-                const SizedBox(height: 26),
+                // const SizedBox(height: 26),
 
 
 
