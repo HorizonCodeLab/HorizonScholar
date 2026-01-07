@@ -77,7 +77,6 @@ flutter:
     - assets/professional_electives.csv
     - assets/open_electives.csv
     - assets/logo.png
-    - assets/HorizonCodeLab/Logo/HorizonLogoColored.png
     - assets/HorizonCodeLab/Logo/HorizonLogo.png
     - assets/HorizonCodeLab/Audio/BGM.mp3
 

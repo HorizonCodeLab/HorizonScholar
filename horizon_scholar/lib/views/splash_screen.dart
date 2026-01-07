@@ -26,7 +26,7 @@ class SplashScreen extends GetView<SplashController> {
                       child: Container(
                         
                         child: Image.asset(
-                          'assets/HorizonCodeLab/Logo/HorizonLogoColored.png',
+                          'assets/HorizonCodeLab/Logo/HorizonLogo.png',
                           width: 140,
                           height: 140,
                           fit: BoxFit.contain,

@@ -31,7 +31,6 @@ class HomeScreen extends GetView<HomeController> {
     final palette = themeController.palette;
     final w = MediaQuery.of(context).size.width;
     final s=w/460;
-    print(w.toString()+"----"+s.toString());
     return Scaffold(
       backgroundColor: palette.bg,
       body: SafeArea(
